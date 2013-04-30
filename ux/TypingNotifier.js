@@ -21,12 +21,14 @@
       plugins: [ Ext.create('Ext.ux.TypingNotifier', { idleTime: '5s' }) ],
 
       listeners: {
-        starttyping: function(){
+        starttyping: function(field){
           console.log('The user is typing...');
         },
 
-        stoptyping: function(){
+        stoptyping: function(field, wroteSomething){
           console.log('The user is not typing anymore...');
+          
+          if(wroteSomething) console.log('The user wrote a text.');
         }
       }
     }
@@ -74,10 +76,12 @@
 
       var notifyStopTyping = function(){
         timeout = null;
-        field.fireEvent("stoptyping", field, );
+        
+        var wroteSomething = field.value.length > 0;
+        field.fireEvent("stoptyping", field, wroteSomething);
       }
 
-      field.on("keypress", function(){
+      field.on("keyup", function(){
         if(!timeout) notifyStartTyping();
         clearTimeout(timeout);
         timeout = setTimeout(notifyStopTyping, time);
